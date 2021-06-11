@@ -1,8 +1,8 @@
 # checkers-react-node
-Checkers game for 2 players built with React, Node, socket.io.
+Checkers game with rooms for 2 players, built with React, Node.js, socket.io.
 
 Available here: 
-[Demo](http://checkers-online-game.herokuapp.com/)  (Open 2 clients to play).
+[Demo](http://checkers-online-game.herokuapp.com/)  
 
 To Run locally:  
 1. cd into the main folder.  
