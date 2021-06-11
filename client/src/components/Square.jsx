@@ -1,4 +1,5 @@
 import Piece from './Piece';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const Square = ({square, onClick,isSelected}) => {
@@ -12,5 +13,9 @@ const Square = ({square, onClick,isSelected}) => {
     )
 
 }
-
+Piece.propTypes = {
+    square: PropTypes.object,
+    onClick: PropTypes.func,
+    isSelected : PropTypes.bool,
+  };
 export default Square;

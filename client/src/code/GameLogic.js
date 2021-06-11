@@ -164,10 +164,11 @@ const checkSingleMove = (fakeBoard, placeFrom, placeTo, isPlayer1, didEat) => {
         eatLocation,
         isMoveToKing
       );
-      if(isMoveToKing){
-        eatingSizeDirection++;
-      }
-      else{
+      // if(isMoveToKing){
+      //   //eatingSizeDirection++;
+
+      // }
+      // else{
 
         let distance = fakeMove[placeTo.i][placeTo.j].isKing ? 7 : 2;
         let directions;
@@ -187,7 +188,7 @@ const checkSingleMove = (fakeBoard, placeFrom, placeTo, isPlayer1, didEat) => {
           1 +
           checkMove(fakeMove, placeTo, distance, isPlayer1, true, directions).localMaxEating;
       
-      }
+     // }
   }
 }
   return { isValid, eatingSizeDirection, eatLocation, isMoveToKing };

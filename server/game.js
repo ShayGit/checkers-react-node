@@ -1,4 +1,3 @@
-const connections = [null,null];
 const boardSize = 8;
 let board = [];
 class Square {
@@ -10,54 +9,71 @@ class Square {
   }
 }
 
-export const initializeGame = (sio, socket) => {
-  let playerIndex = -1;
-  for (var i in connections) {
-    if (connections[i] === null) {
-      playerIndex = i;
-      break;
+
+
+export const initializeGame = (io, socket) => {
+  let sRoomId;
+
+  socket.on("create-new-room", (roomId) => {
+    socket.emit("create-new-room", roomId);
+    socket.join(roomId);
+  });
+
+  socket.on("player-join-room", (data) => {
+    var room = io.sockets.adapter.rooms.get(data.roomId);
+
+    if (room === undefined) {
+      socket.emit("status", "not exists");
+      return;
     }
-  }
+    if (room.size < 2) {
+      sRoomId = data.roomId;
 
-    connections[playerIndex] = socket;
-    let playerNumber= parseInt(playerIndex)+1;
-    socket.emit('player-number', playerNumber);
-    if (playerIndex == -1) return;
-    socket.broadcast.emit('player-connect', playerIndex);
+      socket.join(data.roomId);
 
-   if (connections[0]!=null &&connections[1]!=null) {
+      if (room.size === 2) {
+        initBoard();
+        io.to(data.roomId).emit("start", board);
+      }
+
+      socket.broadcast.to(sRoomId).emit("opponent-join-room", data);
+    } else {
+      socket.emit("status", "full");
+    }
+  });
+
+  socket.on("move", (move) => {
+    socket.broadcast.to(move.roomId).emit("player-move", move.board);
+  });
+
+  socket.on("part-move", (move) => {
+    socket.broadcast.to(move.roomId).emit("part-move", move.board);
+  });
+
+  socket.on("send-to-opponent", (data) => {
+    socket.broadcast
+      .to(data.roomId)
+      .emit("receive-opponent-name", data.username);
+  });
+
+  socket.on("game-over", (roomId) => {
+    socket.broadcast.to(roomId).emit("game-over");
+  });
+
+  socket.on("disconnect", (data) => {
+    if (sRoomId) {
+      socket.broadcast.to(sRoomId).emit("player-disconnect");
+    }
+  });
+
+  socket.on("restart-game", (roomId) => {
     initBoard();
-    socket.emit("start", board);
-    socket.broadcast.emit("start", board);
-
-  }
-  
- 
-
-  socket.on('move', (board) => {
-    socket.broadcast.emit("player-move", board);
+    io.to(roomId).emit("start", board);
   });
-
-  socket.on('part-move', (board) => {
-    socket.broadcast.emit("part-move", board);
-  });
-
-  socket.on('game-over', () => {
-    socket.broadcast.emit("game-over");
-  });
-
-  socket.on('disconnect', data=>{
-    console.log(`Player ${playerNumber} Disconnected`);
-    connections[playerIndex] = null;
-    socket.broadcast.emit("player-disconnect", );
-  });
-
-
-
 };
 
 const initBoard = () => {
-  board = [] ;
+  board = [];
   for (let i = 0; i < boardSize; i++) {
     board[i] = [];
     for (let j = 0; j < boardSize; j++) {
@@ -70,8 +86,7 @@ const initBoard = () => {
           } else {
             board[i][j] = new Square(true, 0);
           }
-        }
-        else{
+        } else {
           board[i][j] = new Square(false, 0);
         }
       } else {
@@ -83,8 +98,7 @@ const initBoard = () => {
           } else {
             board[i][j] = new Square(true, 0);
           }
-        }
-        else{
+        } else {
           board[i][j] = new Square(false, 0);
         }
       }

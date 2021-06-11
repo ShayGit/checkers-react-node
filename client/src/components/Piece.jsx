@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import PropTypes from 'prop-types';
 import React from 'react';
 import { faCrown } from '@fortawesome/free-solid-svg-icons'
 
@@ -17,5 +18,8 @@ const Piece = ({ piece, isSelected }) => {
     )
 
 }
-
+Piece.propTypes = {
+    piece: PropTypes.object,
+    isSelected : PropTypes.bool,
+  };
 export default Piece;

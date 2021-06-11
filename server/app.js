@@ -1,5 +1,4 @@
 import { Server } from "socket.io";
-import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import {initializeGame} from './game.js'

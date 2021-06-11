@@ -1,13 +1,24 @@
 import './index.css';
 
-import Game from './components/Game';
+import App from './App';
+import {Provider as ConnectionProvider} from './Context/ConnectionContext'
+import {Provider as GameProvider} from './Context/GameContext'
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {
+  HashRouter as Router,
+} from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Game />
+    <ConnectionProvider>
+      <GameProvider>
+    <Router basename="/">
+    <App/>
+    </Router>
+    </GameProvider>
+    </ConnectionProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
